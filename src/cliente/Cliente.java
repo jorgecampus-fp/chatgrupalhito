@@ -54,9 +54,29 @@ public class Cliente {
 						while(true) {
 
 							String msg = consola.nextLine();
-							byte [] msgCifrado = ci.encriptar(msg);
-							String msgDescifrado = ci.desencriptar(msgCifrado);
-							salida.writeUTF(msgDescifrado);
+							
+							if(msg.contains("/")) {
+								String [] separate = msg.split(" ");
+								if(separate[0].toLowerCase().equals("/exit")){
+									seguir = false;
+									break;
+									
+								}else if(separate[0].toLowerCase().equals("/changepwd")){
+									byte [] newPass = ci.encriptar(separate[1]);
+									udb.update(nombre, new String(newPass));
+									
+									
+								}else {
+									byte [] msgCifrado = ci.encriptar(msg);
+									String msgDescifrado = ci.desencriptar(msgCifrado);
+									salida.writeUTF(msgDescifrado);
+								}
+								
+							}else {
+								byte [] msgCifrado = ci.encriptar(msg);
+								String msgDescifrado = ci.desencriptar(msgCifrado);
+								salida.writeUTF(msgDescifrado);
+							}
 						
 						}
 					}else {
