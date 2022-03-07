@@ -9,6 +9,7 @@ import java.net.Socket;
 public class HiloEntradaCliente extends Thread{
 	private DataInputStream entrada;
 	
+	
 
 	
 	
