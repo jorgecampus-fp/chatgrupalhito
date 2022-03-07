@@ -13,7 +13,6 @@ import Connection.User;
 import Connection.UsersDB;
 import cifrado.Cifrado;
 
-
 public class Server {
 	
 	public static void main(String[] args) {
@@ -27,20 +26,21 @@ public class Server {
 			
 			Scanner scn = new Scanner(System.in);
 			boolean seguir = true;
-			
-			HiloEntradaServidor hes = new HiloEntradaServidor(entrada);
 			UsersDB udb = new UsersDB();
 			List<User> usuarios = udb.getAll();
-			Cifrado ci = new Cifrado("1234");
+			HiloEntradaServidor hes = new HiloEntradaServidor(entrada);
 			
 			while(seguir) {
 				System.out.println("1-Iniciar sesión\n2-Registrarme\n3-Salir");
 				int op = scn.nextInt();
 				
+				Cifrado ci = new Cifrado("1234");
+				
+				//System.out.println(new String (cifrado));
+				//System.out.println(new String(ci.desencriptar(cifrado)));
 				
 				
 				if(op == 1) {
-					//Iniciar sesion
 					scn.nextLine();
 					System.out.println("Dime nombre:");
 					String nombre = scn.nextLine();
@@ -50,7 +50,6 @@ public class Server {
 					//ENCRIPTACIÓN DE LA PASSWORD
 					byte [] cifrado = ci.encriptar(pass);
 					
-					//UNA VEZ SE VALIDA EL LOGIN
 					boolean poderEntrar = false;
 					
 					for(User u:usuarios) {
@@ -60,6 +59,7 @@ public class Server {
 						}
 					}
 					
+					//UNA VEZ SE VALIDA EL LOGIN
 					if(poderEntrar) {
 						
 						System.out.println("Conectado, esperando para chatear...");
@@ -73,7 +73,21 @@ public class Server {
 							if(msg.contains("/")) {
 								String [] separate = msg.split(" ");
 								if(separate[0].toLowerCase().equals("/send")) {
-									
+									salida.writeUTF("IMGSND");
+									salida.writeUTF(separate[1]);
+									File file = new File("D:\\Users\\Campus FP\\Desktop\\Hitos\\HitoGrupal\\src\\Server\\ArchivosServer\\"+separate[1]);
+							        byte[] fileContent = Files.readAllBytes(file.toPath());
+							        
+							        
+							        //ENCRIPTACIÓN FILE
+							        
+							        
+							        //CONVERSIÓN FILE ENCRIPTADO STR --> FILE ENCRIPTADO BYTES 
+							        byte[] fileEncriptado = ci.encriptarArray(fileContent);
+							        
+							        //ENVÍO DE FILE ENCRIPTADO
+							        salida.writeUTF(""+fileEncriptado.length);
+							        salida.write(fileEncriptado);
 							        
 							        
 								}else if(separate[0].toLowerCase().equals("/exit")){
@@ -82,9 +96,9 @@ public class Server {
 									
 									
 								}else if(separate[0].toLowerCase().equals("/changepwd")){
-									
 									byte [] newPass = ci.encriptar(separate[1]);
 									udb.update(nombre, new String(newPass));
+									
 									
 								}else {
 									byte [] msgCifrado = ci.encriptar(msg);
@@ -104,7 +118,6 @@ public class Server {
 					}
 					
 				}else if(op ==2) {
-					//registrarse
 					scn.nextLine();
 					System.out.println("Dime nombre:");
 					String nombre = scn.nextLine();

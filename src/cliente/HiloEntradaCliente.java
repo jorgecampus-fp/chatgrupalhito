@@ -11,7 +11,6 @@ import cifrado.Cifrado;
 public class HiloEntradaCliente extends Thread{
 	private DataInputStream entrada;
 	
-	
 
 	
 	
@@ -26,14 +25,26 @@ public class HiloEntradaCliente extends Thread{
 	@Override
 	public void run() {
 		String msg;
-		Cifrado ci = new Cifrado("1234");
 		while(true) {
-			
+			Cifrado ci = new Cifrado("1234");
 			 try {
 					msg = entrada.readUTF();
-					
-					System.out.println("Server: "+msg);
-					
+					if(msg.equals("IMGSND")) {
+						System.out.println("Esperando...");
+						String nombreArchivo = entrada.readUTF();
+						String tamano = entrada.readUTF();
+						byte[] fileArray = entrada.readNBytes(Integer.parseInt(tamano));
+						
+						byte[] fileDesencritado = ci.desencriptarArray(fileArray);
+						
+						
+						OutputStream  fileOuputStream = new FileOutputStream("D:\\Users\\Campus FP\\Desktop\\Hitos\\HitoGrupal\\src\\cliente\\"+nombreArchivo);
+						fileOuputStream.write(fileDesencritado);
+						System.out.println("Ha llegado un archivo");
+						fileOuputStream.close();
+					}else {
+						System.out.println("Server"+msg);
+					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

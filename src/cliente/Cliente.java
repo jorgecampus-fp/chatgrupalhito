@@ -15,22 +15,21 @@ public class Cliente {
 	public static void main(String[] args) {
 		
 		try {
+			UsersDB udb = new UsersDB();
 			Scanner consola = new Scanner(System.in);
 			Socket socket = new Socket("127.0.0.1", 5111);
 			DataInputStream entrada = new DataInputStream(socket.getInputStream());
 			DataOutputStream salida = new DataOutputStream(socket.getOutputStream());
 			HiloEntradaCliente hec = new HiloEntradaCliente(entrada);
-			Cifrado ci = new Cifrado("1234");
-			UsersDB udb = new UsersDB();
 			
 			boolean seguir = true;
 			while(seguir) {
 				System.out.println("1-Iniciar sesión\n2-Registrarme\n3-Salir");
 				int op = consola.nextInt();
+				Cifrado ci = new Cifrado("1234");
 				
 				if(op==1) {
 					//Iniciar sesión
-					
 					consola.nextLine();
 					System.out.println("Dime nombre: ");
 					String nombre = consola.nextLine();
