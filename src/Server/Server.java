@@ -9,6 +9,10 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Scanner;
 
+import Connection.User;
+import Connection.UsersDB;
+import cifrado.Cifrado;
+
 
 public class Server {
 	
@@ -25,27 +29,66 @@ public class Server {
 			boolean seguir = true;
 			
 			HiloEntradaServidor hes = new HiloEntradaServidor(entrada);
+			UsersDB udb = new UsersDB();
+			List<User> usuarios = udb.getAll();
+			Cifrado ci = new Cifrado("1234");
 			
 			while(seguir) {
 				System.out.println("1-Iniciar sesión\n2-Registrarme\n3-Salir");
 				int op = scn.nextInt();
 				
 				
-				//System.out.println(new String (cifrado));
-				//System.out.println(new String(ci.desencriptar(cifrado)));
-				
 				
 				if(op == 1) {
 					//Iniciar sesion
+					scn.nextLine();
+					System.out.println("Dime nombre:");
+					String nombre = scn.nextLine();
+					System.out.println("Dime password: ");
+					String pass = scn.nextLine();
 					
 					//ENCRIPTACIÓN DE LA PASSWORD
-					
+					byte [] cifrado = ci.encriptar(pass);
 					
 					//UNA VEZ SE VALIDA EL LOGIN
+					boolean poderEntrar = false;
 					
+					for(User u:usuarios) {
+						if(u.getNombre().equals(nombre)  && u.getContra().equals(new String(cifrado))) {
+							poderEntrar = true;
+							break;
+						}
+					}
+					
+if(poderEntrar) {
+						
+						System.out.println("Conectado, esperando para chatear...");
+						
+						hes.start();
+						
+						System.out.println("Empezando");
+						
+						while(true) {
+							String msg = scn.nextLine();
+							byte [] msgCifrado = ci.encriptar(msg);
+							String msgDescifrado = ci.desencriptar(msgCifrado);
+						}
+						
+					}else {
+						System.out.println("Usuario incorrecto");
+					}
 					
 				}else if(op ==2) {
 					//registrarse
+					scn.nextLine();
+					System.out.println("Dime nombre:");
+					String nombre = scn.nextLine();
+					System.out.println("Dime password: ");
+					String pass = scn.nextLine();
+					byte [] passCifrada = ci.encriptar(pass);
+					udb.register(nombre, new String(passCifrada));
+					User u = new User(nombre, new String(passCifrada));
+					usuarios.add(u);
 				}else if(op ==3) {
 					seguir = false;
 				}else {

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import cifrado.Cifrado;
+
 public class HiloEntradaCliente extends Thread{
 	private DataInputStream entrada;
 	
@@ -24,12 +26,13 @@ public class HiloEntradaCliente extends Thread{
 	@Override
 	public void run() {
 		String msg;
+		Cifrado ci = new Cifrado("1234");
 		while(true) {
 			
 			 try {
 					msg = entrada.readUTF();
 					
-					System.out.println("Server"+msg);
+					System.out.println("Server: "+msg);
 					
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
